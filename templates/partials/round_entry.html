@@ -1,0 +1,63 @@
+<div id="round-entry" class="panel" {% if oob %}hx-swap-oob="true"{% endif %}>
+  <div class="panel-header">
+    <h3>Round entry</h3>
+    <span class="tag">Round {{ current_round_index }} - {{ current_round_label }}</span>
+  </div>
+
+  {% if round_errors %}
+    <div class="form-error">
+      {% for error in round_errors %}
+        <div>{{ error }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if game.finished %}
+    <div class="lock-banner">
+      Scores are locked after round 13. Use Undo or Unlock to reopen.
+    </div>
+  {% elif current_round_submitted %}
+    <div class="lock-banner">
+      This round is already recorded. Edit it in history or undo the last round.
+    </div>
+  {% else %}
+    <form
+      class="form-stack"
+      method="post"
+      action="{{ url_for('submit_round', game_id=game.id) }}"
+      hx-post="{{ url_for('submit_round', game_id=game.id) }}"
+      hx-target="#round-entry"
+      hx-swap="outerHTML"
+    >
+      <input type="hidden" name="round_index" value="{{ current_round_index }}" />
+      <div class="entry-grid">
+        {% for player in players %}
+          {% set values = input_values.get(player.id) if input_values else None %}
+          <div class="entry-card">
+            <div class="entry-name">{{ player.name }}</div>
+            <label class="field">
+              <span>Penalty points</span>
+              <input
+                type="number"
+                name="score_{{ player.id }}"
+                min="0"
+                max="200"
+                value="{{ values.score if values else '' }}"
+                required
+              />
+            </label>
+            <label class="checkbox">
+              <input
+                type="checkbox"
+                name="went_out_{{ player.id }}"
+                {% if values and values.went_out %}checked{% endif %}
+              />
+              Went out
+            </label>
+          </div>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn primary">Submit round</button>
+    </form>
+  {% endif %}
+</div>

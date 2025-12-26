@@ -1,0 +1,21 @@
+<section class="setup">
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Start a New Game</h2>
+      <span class="tag">3-5 players</span>
+    </div>
+    <div id="game-setup-form">
+      {% include "partials/game_setup_form.html" %}
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Resume a Game</h2>
+      <span class="tag">Saved sessions</span>
+    </div>
+    <div id="game-list">
+      {% include "partials/game_list.html" %}
+    </div>
+  </div>
+  {% include "partials/overall_scoreboard.html" %}
+</section>

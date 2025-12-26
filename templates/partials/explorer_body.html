@@ -1,0 +1,33 @@
+<section class="dashboard">
+  <div class="dashboard-header">
+    <div>
+      <div class="eyebrow">Data Explorer</div>
+      <h2>Scoreboard Database</h2>
+      <div class="muted">Read-only view of games, players, rounds, and scores.</div>
+    </div>
+    <div class="inline-actions">
+      {% if selected_game %}
+        <a
+          class="btn ghost"
+          href="{{ url_for('game_view', game_id=selected_game.id) }}"
+          hx-get="{{ url_for('game_view', game_id=selected_game.id) }}"
+          hx-target="#app"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+        >Open game</a>
+      {% endif %}
+      <a
+        class="btn ghost"
+        href="/"
+        hx-get="/"
+        hx-target="#app"
+        hx-swap="innerHTML"
+        hx-push-url="true"
+      >All games</a>
+    </div>
+  </div>
+
+  <div id="explorer-body">
+    {% include "partials/explorer_content.html" %}
+  </div>
+</section>

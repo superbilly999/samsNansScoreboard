@@ -1,0 +1,231 @@
+<div class="panel filter-panel">
+  <form
+    class="filter-bar"
+    method="get"
+    action="{{ url_for('explorer') }}"
+    hx-get="{{ url_for('explorer') }}"
+    hx-target="#explorer-body"
+    hx-swap="innerHTML"
+  >
+    <label class="field">
+      <span>Filter by game</span>
+      <select name="game_id">
+        <option value="">All games</option>
+        {% for game in games %}
+          <option value="{{ game.id }}" {% if selected_game and game.id == selected_game.id %}selected{% endif %}>
+            {{ game.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+    <div class="filter-actions">
+      <button type="submit" class="btn ghost small">Apply</button>
+      {% if selected_game %}
+        <a
+          class="btn ghost small"
+          href="{{ url_for('explorer') }}"
+          hx-get="{{ url_for('explorer') }}"
+          hx-target="#explorer-body"
+          hx-swap="innerHTML"
+        >Clear</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+
+<div class="dashboard-grid explorer-grid">
+  <div class="panel">
+    <div class="panel-header">
+      <h3>Overview</h3>
+      <span class="tag">Snapshot</span>
+    </div>
+    <div class="insights-grid">
+      <div class="stat-card">
+        <div class="eyebrow">Games</div>
+        <div class="stat-value">{{ game_count }}</div>
+        <div class="muted">{{ active_games }} active - {{ archived_games }} archived</div>
+      </div>
+      <div class="stat-card">
+        <div class="eyebrow">Players</div>
+        <div class="stat-value">{{ player_count }}</div>
+        <div class="muted">Across all games</div>
+      </div>
+      <div class="stat-card">
+        <div class="eyebrow">Rounds</div>
+        <div class="stat-value">{{ round_count }}</div>
+        <div class="muted">Tracked so far</div>
+      </div>
+      <div class="stat-card">
+        <div class="eyebrow">Scores</div>
+        <div class="stat-value">{{ score_count }}</div>
+        <div class="muted">Penalty entries</div>
+      </div>
+      {% if selected_game %}
+        <div class="stat-card">
+          <div class="eyebrow">Selected game</div>
+          <div class="stat-value">{{ selected_game.name }}</div>
+          <div class="muted">Round {{ selected_game.current_round_index }}/13</div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>Games</h3>
+      <span class="tag">{{ game_count }}</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Round</th>
+            <th>Players</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for summary in game_summaries %}
+            <tr>
+              <td>{{ summary.game.name }}</td>
+              <td>
+                {% if summary.game.archived %}
+                  Archived
+                {% elif summary.game.finished %}
+                  Finished
+                {% else %}
+                  Active
+                {% endif %}
+              </td>
+              <td>{{ summary.game.current_round_index }}/13</td>
+              <td>{{ summary.player_count }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="4" class="muted">No games yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>Players</h3>
+      <span class="tag">{{ player_count }}</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            {% if not selected_game %}
+              <th>Game</th>
+            {% endif %}
+            <th>Order</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for player in players %}
+            <tr>
+              <td>{{ player.name }}</td>
+              {% if not selected_game %}
+                <td>{{ player.game.name if player.game else '-' }}</td>
+              {% endif %}
+              <td>{{ player.sort_order + 1 }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="{{ 2 if selected_game else 3 }}" class="muted">No players found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if not selected_game %}
+      <div class="muted">Showing latest {{ players|length }} players.</div>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>Rounds</h3>
+      <span class="tag">{{ round_count }}</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Round</th>
+            {% if not selected_game %}
+              <th>Game</th>
+            {% endif %}
+            <th>Index</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for round_item in rounds %}
+            <tr>
+              <td>{{ round_item.round_name }}</td>
+              {% if not selected_game %}
+                <td>{{ round_item.game.name if round_item.game else '-' }}</td>
+              {% endif %}
+              <td>{{ round_item.round_index }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="{{ 2 if selected_game else 3 }}" class="muted">No rounds found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if not selected_game %}
+      <div class="muted">Showing latest {{ rounds|length }} rounds.</div>
+    {% endif %}
+  </div>
+
+  <div class="panel wide">
+    <div class="panel-header">
+      <h3>Scores</h3>
+      <span class="tag">{{ score_count }}</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Round</th>
+            <th>Player</th>
+            {% if not selected_game %}
+              <th>Game</th>
+            {% endif %}
+            <th>Score</th>
+            <th>Went out</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for score in scores %}
+            <tr>
+              <td>{{ score.round.round_name if score.round else '-' }}</td>
+              <td>{{ score.player.name if score.player else '-' }}</td>
+              {% if not selected_game %}
+                <td>{{ score.round.game.name if score.round and score.round.game else '-' }}</td>
+              {% endif %}
+              <td>{{ score.score }}</td>
+              <td>{{ 'Yes' if score.went_out else 'No' }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="{{ 4 if selected_game else 5 }}" class="muted">No scores recorded.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if not selected_game %}
+      <div class="muted">Showing latest {{ scores|length }} scores.</div>
+    {% endif %}
+  </div>
+</div>

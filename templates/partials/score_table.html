@@ -1,0 +1,40 @@
+<div id="score-table" class="panel" {% if oob %}hx-swap-oob="true"{% endif %}>
+  <div class="panel-header">
+    <h3>Scoreboard</h3>
+    <span class="tag">{{ current_round_label }} scores</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Round</th>
+          <th>Total</th>
+          <th>Rank</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for player in players %}
+          {% set current_score = current_round_scores.get(player.id) %}
+          <tr
+            class="{% if player.id in leader_ids %}leader{% elif player.id in last_ids %}last-place{% endif %}"
+          >
+            <td>{{ player.name }}</td>
+            <td>
+              {% if current_score %}
+                {{ current_score.score }}
+                {% if current_score.went_out %}
+                  <span class="went-out" title="Went out">*</span>
+                {% endif %}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>{{ totals[player.id] }}</td>
+            <td>#{{ ranks[player.id] }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

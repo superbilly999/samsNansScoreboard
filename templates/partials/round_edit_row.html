@@ -1,0 +1,66 @@
+<tr id="round-row-{{ round_item.id }}" class="edit-row">
+  <td colspan="{{ players|length + 2 }}">
+    <form
+      class="form-stack"
+      method="post"
+      action="{{ url_for('edit_round', game_id=game.id, round_id=round_item.id) }}"
+      hx-post="{{ url_for('edit_round', game_id=game.id, round_id=round_item.id) }}"
+      hx-target="#round-row-{{ round_item.id }}"
+      hx-swap="outerHTML"
+    >
+      <div class="panel-header">
+        <h4>Edit {{ round_item.round_name }}</h4>
+        <div class="inline-actions">
+          <button
+            type="button"
+            class="btn ghost"
+            hx-get="{{ url_for('round_row', game_id=game.id, round_id=round_item.id) }}"
+            hx-target="#round-row-{{ round_item.id }}"
+            hx-swap="outerHTML"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn primary">Save</button>
+        </div>
+      </div>
+      {% if edit_errors %}
+        <div class="form-error">
+          {% for error in edit_errors %}
+            <div>{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <div class="entry-grid">
+        {% for player in players %}
+          {% set values = input_values.get(player.id) if input_values else None %}
+          {% if not values %}
+            {% set score_obj = scores_by_player.get(player.id) %}
+            {% set values = namespace(score=score_obj.score if score_obj else '', went_out=score_obj.went_out if score_obj else False) %}
+          {% endif %}
+          <div class="entry-card">
+            <div class="entry-name">{{ player.name }}</div>
+            <label class="field">
+              <span>Penalty points</span>
+              <input
+                type="number"
+                name="score_{{ player.id }}"
+                min="0"
+                max="200"
+                value="{{ values.score }}"
+                required
+              />
+            </label>
+            <label class="checkbox">
+              <input
+                type="checkbox"
+                name="went_out_{{ player.id }}"
+                {% if values.went_out %}checked{% endif %}
+              />
+              Went out
+            </label>
+          </div>
+        {% endfor %}
+      </div>
+    </form>
+  </td>
+</tr>

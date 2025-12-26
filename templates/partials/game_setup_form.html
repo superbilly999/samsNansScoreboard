@@ -1,0 +1,44 @@
+<form
+  class="form-stack"
+  method="post"
+  action="{{ url_for('create_game') }}"
+  hx-post="{{ url_for('create_game') }}"
+  hx-target="#app"
+  hx-swap="innerHTML"
+>
+  <label class="field">
+    <span>Game name</span>
+    <input
+      type="text"
+      name="game_name"
+      placeholder="Family Xmas 2025"
+      value="{{ game_name or '' }}"
+      required
+    />
+  </label>
+  <label class="field">
+    <span>Number of players</span>
+    <select
+      name="player_count"
+      hx-get="{{ url_for('player_fields') }}"
+      hx-target="#player-fields"
+      hx-swap="innerHTML"
+      hx-trigger="change"
+    >
+      {% for count in range(3, 6) %}
+        <option value="{{ count }}" {% if count == player_count %}selected{% endif %}>{{ count }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <div id="player-fields">
+    {% include "partials/player_fields.html" %}
+  </div>
+  {% if setup_errors %}
+    <div class="form-error">
+      {% for error in setup_errors %}
+        <div>{{ error }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <button type="submit" class="btn primary">Create game</button>
+</form>

@@ -1,0 +1,23 @@
+<div id="round-status" class="panel status" {% if oob %}hx-swap-oob="true"{% endif %}>
+  <div>
+    <div class="eyebrow">Current round</div>
+    <div class="round-title">{{ current_round_label }}</div>
+    <div class="muted">Round {{ current_round_index }}/13</div>
+  </div>
+  <div class="progress">
+    <div class="progress-track">
+      <div class="progress-fill" style="width: {{ (current_round_index / 13) * 100 }}%"></div>
+    </div>
+    <div class="progress-meta">{{ rounds_completed }} complete</div>
+  </div>
+  {% if game.finished and winners %}
+    <div class="winner">
+      <div class="eyebrow">Winner</div>
+      {% if winners|length == 1 %}
+        <div class="winner-name">{{ winners[0].name }}</div>
+      {% else %}
+        <div class="winner-name">Tie: {{ winners | map(attribute='name') | join(', ') }}</div>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>

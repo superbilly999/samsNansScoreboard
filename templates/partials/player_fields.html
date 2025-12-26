@@ -1,0 +1,21 @@
+<div class="player-fields">
+  {% for index in range(player_count) %}
+    <label class="field">
+      <span>Player {{ index + 1 }}</span>
+      <input
+        type="text"
+        name="player_names"
+        list="person-name-list"
+        value="{{ player_names[index] if player_names and index < player_names|length else '' }}"
+        required
+      />
+    </label>
+  {% endfor %}
+</div>
+{% if person_names %}
+  <datalist id="person-name-list">
+    {% for name in person_names %}
+      <option value="{{ name }}"></option>
+    {% endfor %}
+  </datalist>
+{% endif %}

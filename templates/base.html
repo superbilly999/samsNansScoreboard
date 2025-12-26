@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sam's Nan's Game Scoreboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <div class="brand-mark">SNG</div>
+        <div>
+          <div class="brand-title">Sam's Nan's Game</div>
+          <div class="brand-subtitle">Scoreboard Dashboard</div>
+        </div>
+      </div>
+    </header>
+    <main id="app">
+      {% block content %}{% endblock %}
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="{{ url_for('static', filename='insights.js') }}"></script>
+  </body>
+</html>

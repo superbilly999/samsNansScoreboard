@@ -1,0 +1,36 @@
+<div id="player-editor" class="player-editor" {% if oob %}hx-swap-oob="true"{% endif %}>
+  {% if player_errors %}
+    <div class="form-error">
+      {% for error in player_errors %}
+        <div>{{ error }}</div>
+      {% endfor %}
+    </div>
+  {% elif player_saved %}
+    <div class="form-success">Player names updated.</div>
+  {% endif %}
+  <form
+    class="form-stack"
+    method="post"
+    action="{{ url_for('update_players', game_id=game.id) }}"
+    hx-post="{{ url_for('update_players', game_id=game.id) }}"
+    hx-target="#player-editor"
+    hx-swap="outerHTML"
+  >
+    <div class="player-fields">
+      {% for player in players %}
+        <label class="field">
+          <span>Player {{ loop.index }}</span>
+          <input type="text" name="player_names" list="person-name-list" value="{{ player.name }}" required />
+        </label>
+      {% endfor %}
+    </div>
+    {% if person_names %}
+      <datalist id="person-name-list">
+        {% for name in person_names %}
+          <option value="{{ name }}"></option>
+        {% endfor %}
+      </datalist>
+    {% endif %}
+    <button type="submit" class="btn primary">Save names</button>
+  </form>
+</div>

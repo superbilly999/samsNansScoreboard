@@ -1,0 +1,63 @@
+<section class="dashboard">
+  <div class="dashboard-header">
+    <div>
+      <div class="eyebrow">Active Game</div>
+      <h2>{{ game.name }}</h2>
+      <div class="muted">
+        Started {{ game.created_at.strftime('%b %d, %Y') if game.created_at else '' }}
+      </div>
+    </div>
+    <div class="inline-actions">
+      <a
+        class="btn ghost"
+        href="/"
+        hx-get="/"
+        hx-target="#app"
+        hx-swap="innerHTML"
+        hx-push-url="true"
+      >All games</a>
+      <a
+        class="btn ghost"
+        href="{{ url_for('explorer') }}"
+        hx-get="{{ url_for('explorer') }}"
+        hx-target="#app"
+        hx-swap="innerHTML"
+        hx-push-url="true"
+      >Data explorer</a>
+      <a class="btn ghost" href="#round-insights">Game insights</a>
+      <a class="btn ghost" href="{{ url_for('export_csv', game_id=game.id) }}">Export CSV</a>
+      <button
+        class="btn ghost"
+        hx-post="{{ url_for('undo_round', game_id=game.id) }}"
+        hx-target="#round-history"
+        hx-swap="outerHTML"
+      >
+        Undo last round
+      </button>
+      {% if game.finished %}
+        <button
+          class="btn primary"
+          hx-post="{{ url_for('unlock_game', game_id=game.id) }}"
+          hx-target="#round-entry"
+          hx-swap="outerHTML"
+        >
+          Unlock scoring
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  {% include "partials/round_status.html" %}
+
+  <div class="dashboard-grid">
+    {% include "partials/score_table.html" %}
+    {% include "partials/round_entry.html" %}
+    {% include "partials/round_history.html" %}
+    {% include "partials/round_insights.html" %}
+  </div>
+
+  <details class="panel player-panel">
+    <summary>Edit player names</summary>
+    {% include "partials/player_editor.html" %}
+  </details>
+</section>

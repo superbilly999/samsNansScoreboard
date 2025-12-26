@@ -1,0 +1,26 @@
+<tr id="round-row-{{ round_item.id }}">
+  <td>{{ round_item.round_name }}</td>
+  {% for player in players %}
+    {% set score = score_map.get(player.id) %}
+    <td>
+      {% if score %}
+        {{ score.score }}
+        {% if score.went_out %}
+          <span class="went-out" title="Went out">*</span>
+        {% endif %}
+      {% else %}
+        -
+      {% endif %}
+    </td>
+  {% endfor %}
+  <td>
+    <button
+      class="btn ghost"
+      hx-get="{{ url_for('edit_round_form', game_id=game.id, round_id=round_item.id) }}"
+      hx-target="#round-row-{{ round_item.id }}"
+      hx-swap="outerHTML"
+    >
+      Edit
+    </button>
+  </td>
+</tr>

@@ -1,0 +1,114 @@
+<div id="round-insights" class="panel wide insights-panel" {% if oob %}hx-swap-oob="true"{% endif %}>
+  <div class="panel-header">
+    <h3>Game insights</h3>
+    <span class="tag">
+      Rounds played {{ rounds_completed }}/13
+    </span>
+  </div>
+
+  {% if not rounds %}
+    <p class="muted">Submit the first round to unlock trendlines and score insights.</p>
+  {% else %}
+    <div class="insights-grid">
+      <div class="stat-card">
+        <div class="eyebrow">Overall leader</div>
+        <div class="stat-value">{{ leader_total }}</div>
+        <div class="muted">{{ leader_players | map(attribute='name') | join(', ') }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="eyebrow">Last place</div>
+        <div class="stat-value">{{ last_total }}</div>
+        <div class="muted">{{ last_players | map(attribute='name') | join(', ') }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="eyebrow">Avg round total</div>
+        <div class="stat-value">{{ average_round_total | round(1) }}</div>
+        <div class="muted">Penalty points</div>
+      </div>
+      <div class="stat-card">
+        <div class="eyebrow">Total penalties</div>
+        <div class="stat-value">{{ overall_total }}</div>
+        <div class="muted">All rounds</div>
+      </div>
+      <div class="stat-card">
+        <div class="eyebrow">Best round</div>
+        <div class="stat-value">{{ best_round.round_name }}</div>
+        <div class="muted">Total {{ best_round_total }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="eyebrow">Toughest round</div>
+        <div class="stat-value">{{ worst_round.round_name }}</div>
+        <div class="muted">Total {{ worst_round_total }}</div>
+      </div>
+    </div>
+
+    <div class="insights-charts">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="eyebrow">Cumulative trend</div>
+            <div class="chart-title">Total penalties by round</div>
+          </div>
+          <div class="muted">{{ rounds_completed }} rounds</div>
+        </div>
+        <div class="chart-box">
+          <canvas
+            id="trend-chart"
+            class="chart-canvas"
+            data-labels='{{ trend_labels | tojson }}'
+            data-datasets='{{ trend_datasets | tojson }}'
+          ></canvas>
+        </div>
+        <div class="chart-actions">
+          <button type="button" class="btn ghost small" data-chart-action="zoom-in">Zoom in</button>
+          <button type="button" class="btn ghost small" data-chart-action="zoom-out">Zoom out</button>
+          <button type="button" class="btn ghost small" data-chart-action="reset">Reset</button>
+        </div>
+        <div class="chart-hint">Use the zoom controls to focus on a range without accidental scroll zoom.</div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="eyebrow">Last round snapshot</div>
+            <div class="chart-title">Penalty points by player</div>
+          </div>
+          <div class="muted">{{ last_round.round_name }}</div>
+        </div>
+        <div class="chart-box">
+          <canvas
+            id="round-bar-chart"
+            class="chart-canvas"
+            data-labels='{{ last_round_labels | tojson }}'
+            data-values='{{ last_round_values | tojson }}'
+            data-colors='{{ player_colors | tojson }}'
+          ></canvas>
+        </div>
+        <div class="snapshot-list">
+          <div class="snapshot-item">
+            <span>Average</span>
+            <strong>{{ last_round_average | round(1) }}</strong>
+          </div>
+          <div class="snapshot-item">
+            <span>Low</span>
+            <strong>{{ last_round_low }} ({{ last_round_low_players | map(attribute='name') | join(', ') }})</strong>
+          </div>
+          <div class="snapshot-item">
+            <span>High</span>
+            <strong>{{ last_round_high }} ({{ last_round_high_players | map(attribute='name') | join(', ') }})</strong>
+          </div>
+          <div class="snapshot-item">
+            <span>Went out</span>
+            <strong>
+              {% if went_out_players %}
+                {{ went_out_players | map(attribute='name') | join(', ') }}
+              {% else %}
+                None
+              {% endif %}
+            </strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>

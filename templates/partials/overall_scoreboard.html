@@ -1,0 +1,37 @@
+<div class="panel">
+  <div class="panel-header">
+    <h2>Overall scoreboard</h2>
+    <span class="tag">All games</span>
+  </div>
+
+  {% if overall_scores %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Total</th>
+            <th>Games</th>
+            <th>Rounds</th>
+            <th>Avg/Round</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in overall_scores %}
+            <tr>
+              <td>#{{ row.rank }}</td>
+              <td>{{ row.name }}</td>
+              <td>{{ row.total_score }}</td>
+              <td>{{ row.games_played }}</td>
+              <td>{{ row.rounds_played }}</td>
+              <td>{{ row.avg_per_round }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="muted">No scored rounds yet. Play a game to populate totals.</p>
+  {% endif %}
+</div>

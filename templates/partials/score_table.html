@@ -1,31 +1,28 @@
 <div id="score-table" class="panel" {% if oob %}hx-swap-oob="true"{% endif %}>
   <div class="panel-header">
     <h3>Scoreboard</h3>
-    <span class="tag">{{ current_round_label }} scores</span>
+    <span class="tag">Game averages</span>
   </div>
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
           <th>Player</th>
-          <th>Round</th>
+          <th>Avg</th>
           <th>Total</th>
           <th>Rank</th>
         </tr>
       </thead>
       <tbody>
         {% for player in players %}
-          {% set current_score = current_round_scores.get(player.id) %}
+          {% set avg_score = averages.get(player.id) %}
           <tr
             class="{% if player.id in leader_ids %}leader{% elif player.id in last_ids %}last-place{% endif %}"
           >
             <td>{{ player.name }}</td>
             <td>
-              {% if current_score %}
-                {{ current_score.score }}
-                {% if current_score.went_out %}
-                  <span class="went-out" title="Went out">*</span>
-                {% endif %}
+              {% if avg_score is not none %}
+                {{ avg_score }}
               {% else %}
                 -
               {% endif %}

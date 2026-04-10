@@ -1,0 +1,35 @@
+<div id="trophy-shelf" class="panel wide trophy-panel" {% if oob %}hx-swap-oob="true"{% endif %}>
+  <div class="panel-header">
+    <h3>Trophy shelf</h3>
+    <span class="tag">Game highlights</span>
+  </div>
+
+  {% if not trophy_shelf %}
+    <p class="muted">Play a round to unlock trophies.</p>
+  {% else %}
+    <div class="trophy-grid">
+      {% for trophy in trophy_shelf %}
+        <div class="trophy-card">
+          <div class="trophy-icon trophy-{{ trophy.icon }}">
+            {% if trophy.icon == "crown" %}
+              <span class="trophy-glyph" aria-hidden="true">&#x1F451;</span>
+            {% elif trophy.icon == "spark" %}
+              <span class="trophy-glyph" aria-hidden="true">&#x2728;</span>
+            {% elif trophy.icon == "star" %}
+              <span class="trophy-glyph" aria-hidden="true">&#x2B50;</span>
+            {% elif trophy.icon == "bolt" %}
+              <span class="trophy-glyph" aria-hidden="true">&#x26A1;</span>
+            {% elif trophy.icon == "medal" %}
+              <span class="trophy-glyph" aria-hidden="true">&#x1F3C5;</span>
+            {% endif %}
+          </div>
+          <div>
+            <div class="eyebrow">{{ trophy.title }}</div>
+            <div class="trophy-value">{{ trophy.value }}</div>
+            <div class="muted">{{ trophy.detail }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Space+Grotesk:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;600;700&display=swap");
 
 :root {
   --bg: #f4efe7;
@@ -20,7 +20,7 @@
 
 body {
   margin: 0;
-  font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+  font-family: "Fraunces", "Georgia", serif;
   color: var(--ink);
   background: radial-gradient(circle at top, #fff7e8 0%, #f5efe6 50%, #f0e8dc 100%);
   min-height: 100vh;
@@ -345,6 +345,65 @@ button:hover {
   .explorer-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.trophy-panel {
+  background: linear-gradient(135deg, #fff6e1 0%, #fffdf7 100%);
+}
+
+.trophy-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.trophy-card {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.trophy-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #ffe9b3;
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: #a25a00;
+}
+
+.trophy-icon.trophy-spark {
+  color: #0f766e;
+}
+
+.trophy-icon.trophy-star {
+  color: #f59e0b;
+}
+
+.trophy-icon.trophy-bolt {
+  color: #b45309;
+}
+
+.trophy-icon.trophy-medal {
+  color: #9a3412;
+}
+
+.trophy-glyph {
+  font-size: 1.35rem;
+  line-height: 1;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+.trophy-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 2px;
 }
 
 .status {

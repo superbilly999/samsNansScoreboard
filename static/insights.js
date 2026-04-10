@@ -27,7 +27,7 @@
     if (!window.Chart) {
       return;
     }
-    Chart.defaults.font.family = '"Space Grotesk", "Trebuchet MS", sans-serif';
+    Chart.defaults.font.family = '"Fraunces", "Georgia", serif';
     Chart.defaults.color = "#6c635b";
     if (window.ChartZoom) {
       Chart.register(window.ChartZoom);

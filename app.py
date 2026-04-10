@@ -99,10 +99,13 @@ def build_game_context(game):
     totals = {player.id: 0 for player in players}
     cumulative_by_player = {player.id: [] for player in players}
     round_totals = []
+    score_counts = {player.id: 0 for player in players}
 
     for round_item in rounds:
         score_map = {score.player_id: score for score in round_item.scores}
         round_total = 0
+        for score in round_item.scores:
+            score_counts[score.player_id] = score_counts.get(score.player_id, 0) + 1
         for player in players:
             score_obj = score_map.get(player.id)
             score_value = score_obj.score if score_obj else 0
@@ -204,11 +207,79 @@ def build_game_context(game):
     last_round_labels = [player.name for player in players]
     last_round_values = [last_round_scores.get(player.id, 0) for player in players]
 
+    trophy_shelf = []
+    if players and rounds:
+        trophy_shelf.append(
+            {
+                "title": "Overall leader",
+                "value": leader_players[0].name if leader_players else "-",
+                "detail": f"{leader_total} pts",
+                "icon": "crown",
+            }
+        )
+        trophy_shelf.append(
+            {
+                "title": "Best round",
+                "value": best_round.round_name if best_round else "-",
+                "detail": f"{best_round_total} pts",
+                "icon": "spark",
+            }
+        )
+
+        went_out_counts = {}
+        for round_item in rounds:
+            for score in scores_by_round.get(round_item.id, {}).values():
+                if score.went_out:
+                    went_out_counts[score.player_id] = went_out_counts.get(score.player_id, 0) + 1
+        if went_out_counts:
+            top_player_id = max(went_out_counts, key=went_out_counts.get)
+            top_player = next((player for player in players if player.id == top_player_id), None)
+            trophy_shelf.append(
+                {
+                    "title": "Went out",
+                    "value": top_player.name if top_player else "-",
+                    "detail": f"{went_out_counts[top_player_id]} times",
+                    "icon": "star",
+                }
+            )
+        else:
+            trophy_shelf.append(
+                {
+                    "title": "Went out",
+                    "value": "-",
+                    "detail": "No wins yet",
+                    "icon": "star",
+                }
+            )
+
+        trophy_shelf.append(
+            {
+                "title": "Widest gap",
+                "value": f"{score_spread} pts",
+                "detail": "Leader to last",
+                "icon": "bolt",
+            }
+        )
+        trophy_shelf.append(
+            {
+                "title": "Last round MVP",
+                "value": last_round_low_players[0].name if last_round_low_players else "-",
+                "detail": f"{last_round_low} pts",
+                "icon": "medal",
+            }
+        )
+
+    averages = {}
+    for player in players:
+        count = score_counts.get(player.id, 0)
+        averages[player.id] = round(totals[player.id] / count, 1) if count else None
+
     return {
         "players": players,
         "rounds": rounds,
         "scores_by_round": scores_by_round,
         "totals": totals,
+        "averages": averages,
         "round_totals": round_totals,
         "current_round": current_round,
         "current_round_scores": current_round_scores,
@@ -248,6 +319,7 @@ def build_game_context(game):
         "trend_datasets": trend_datasets,
         "last_round_labels": last_round_labels,
         "last_round_values": last_round_values,
+        "trophy_shelf": trophy_shelf,
         "input_values": {},
         "person_names": get_person_names(),
     }
@@ -773,7 +845,19 @@ def edit_round(game_id, round_id):
             "score_map": context["scores_by_round"].get(round_item.id, {}),
         }
     )
-    return render_template("partials/updates_round_row.html", **context)
+    if is_htmx_request():
+        response = make_response(
+            render_template(
+                "partials/updates_round_history.html",
+                history_message="Round updated.",
+                **context,
+            )
+        )
+        # Swapping the entire history panel is more reliable than row-only swaps for table fragments.
+        response.headers["HX-Retarget"] = "#round-history"
+        response.headers["HX-Reswap"] = "outerHTML"
+        return response
+    return redirect(url_for("game_view", game_id=game.id))
 
 
 @app.post("/game/<int:game_id>/rounds/undo")
